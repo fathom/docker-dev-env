@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+
+  php-apache:
+    build:
+      context: ./docker
+      dockerfile: php.docker
+    container_name: php
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/apache/sites-enabled:/etc/apache2/sites-enabled
+    ports:
+      - "80:80"
+    working_dir: /var/www/html
+    links:
+      - memcached
+      - mariadb
+  
+  memcached:
+    image: memcached
+    restart: always
+
+  mariadb:
+    image: mariadb
+    restart: always
+    volumes:
+      - ./data-mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - 3306:3306
